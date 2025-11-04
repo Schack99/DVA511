@@ -3,8 +3,8 @@ package com.company;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.file.Paths;
-import java.util.Base64;
 import java.io.*;
+import java.util.HexFormat;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -23,30 +23,21 @@ public class Main {
     }
 
     public static String encode(String key, String data) throws Exception {
+        //create hmacsha256 session
         Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
         SecretKeySpec secret_key = new SecretKeySpec(key.getBytes("UTF-8"), "HmacSHA256");
         sha256_HMAC.init(secret_key);
+        //return a Hex of bytes
         byte [] send = sha256_HMAC.doFinal(data.getBytes("UTF-8"));
-        String hex = "";
-
-        for (byte i : send) {
-            hex += String.format("%02X", i);
-        }
-
-        return hex.toLowerCase(Locale.ROOT);
+        return HexFormat.of().formatHex(send).toLowerCase(Locale.ROOT);
     }
 
     public static boolean check(String macUser, String macServer) throws Exception {
-        if (macUser.equals(macServer)){
-            return true;
-        }
-        else return false;
+        return macUser.equals(macServer);
     }
 
     public static void main(String [] args) throws Exception {
-        //args = new String[]{"key", "mess", "hmac"};
         //Here we extract the info from args
-
         if (args.length != 3){
             System.out.println("wrong formating");
             System.out.println("try writing absoulte path for files :)");
@@ -68,7 +59,7 @@ public class Main {
         mac = holder[0];
 
 
-        //say that we have client1
+        //say that we have client1 and we want to verify HTTP
         client client1 = new client();
         client1.initClient(pass,mess.toString(), mac);
 
