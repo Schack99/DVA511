@@ -62,7 +62,6 @@ public class Main {
         //say that we have client1 and we want to verify HTTP
         client client1 = new client();
         client1.initClient(pass,mess.toString(), mac);
-
         //create hmac sesstion and verify hmac
         if (check(encode(client1.password, client1.message), mac)){
         } else {
